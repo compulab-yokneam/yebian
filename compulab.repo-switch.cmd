@@ -1,4 +1,4 @@
-#!/bin/bash -ex
+#!/bin/bash
 
 if [[ $1 == 'DEBIAN' ]];then
 CONF=Debian
@@ -11,6 +11,3 @@ DCONF=/etc/apt/sources.list
 fi
 
 sed -i 's/^#//g' ${ECONF} ; sed -i 's/^d/#d/g' ${DCONF}
-
-echo ${CONF}
-cat ${ECONF} ${DCONF}
