@@ -73,7 +73,7 @@ IMX_BOOT="/boot/"$(basename $(ls ${root_fs}/boot/imx*))
 cat << eof | sudo tee ${root_fs}/tmp/${cmd}
 #!/bin/bash
 
-rm -rf /tmp/*.cmd
+rm -rf /tmp/*.cmd /var/cache/apt /etc/apt/sources.list.d/yocto.list
 SRC=/ DST=${DEVICE} QUIET=Yes cl-deploy.work
 dd=${IMX_BOOT} of=${DEVICE} bs=1K seek=33
 
