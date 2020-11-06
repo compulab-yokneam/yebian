@@ -64,7 +64,7 @@ bind_umount
 # Image Build
 function stage_5() {
 mkdir -p ${images}
-local IMAGE=${images}/compulab-debin-${name}-$(date +%Y%m%d%H%M%S).sdcard.img
+local IMAGE=${images}/compulab-debian-${name}-$(date +%Y%m%d%H%M%S).sdcard.img
 dd if=/dev/zero of=${IMAGE} bs=1M count=2048
 local DEVICE=$(sudo losetup --show --find ${IMAGE})
 local cmd=image.cmd
@@ -73,7 +73,7 @@ IMX_BOOT="/boot/"$(basename $(ls ${root_fs}/boot/imx*))
 cat << eof | sudo tee ${root_fs}/tmp/${cmd}
 #!/bin/bash
 
-rm -rf /tmp/*.cmd /var/cache/apt /etc/apt/sources.list.d/yocto.list
+rm -rf /tmp/*.cmd /var/cache/apt /etc/apt/sources.list.d/yocto*
 SRC=/ DST=${DEVICE} QUIET=Yes cl-deploy.work
 dd=${IMX_BOOT} of=${DEVICE} bs=1K seek=33
 
