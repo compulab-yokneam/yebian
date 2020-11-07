@@ -1,5 +1,3 @@
-#!/bin/bash -ex
-
 PACKAGES="alsa-utils  
 	apt-utils  
 	bluez  
@@ -28,6 +26,7 @@ PACKAGES="alsa-utils
 	less  
 	libparted2  
 	libqmi-utils  
+	locales
 	minicom  
 	mmc-utils  
 	modemmanager  
@@ -61,16 +60,3 @@ PACKAGES="alsa-utils
 	xz-utils  
 "
 
-export DEBIAN_FRONTEND=noninteractive
-apt update
-apt install -y locales
-locale > /dev/null 
-locale-gen en_US.UTF-8
-dpkg-reconfigure locales
-
-apt-get install --yes --no-install-recommends ${PACKAGES}
-
-NCFG='/etc/NetworkManager/NetworkManager.conf'
-if [[ -f ${NCFG} ]];then
-sed -i '/\[main\]/a dns=dnsmasq' ${NCFG}
-fi

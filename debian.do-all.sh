@@ -1,4 +1,4 @@
-#!/bin/bash -x
+#!/bin/bash -ex
 
 PROGNAME=${BASH_SOURCE[0]}
 DIRNAME=$(dirname ${PROGNAME})
@@ -11,8 +11,6 @@ CONF=${DIRNAME}/compulab.inc
 CONF=${DIRNAME}/../local/local.conf
 [[ ! -e ${CONF} ]] && ${EXIT} 2
 . ${CONF}
-
-BUILD=${DIRNAME}/../build
 
 BUILDDIR=$(dirname $(dirname ${DEPLOY_DIR})) 
 BUILD_DIR=$(basename ${BUILDDIR})
@@ -28,8 +26,6 @@ python -m SimpleHTTPServer 5678 &
 PID=$!
 
 popd
-
-mkdir -p ${BUILD}
 
 ${DIRNAME}/debian.sh
 

@@ -1,4 +1,4 @@
-#!/bin/bash -xe
+#!/bin/bash -ex
 
 function bind_mount() {
     for d in dev sys proc; do
@@ -16,7 +16,7 @@ function bind_umount() {
 # Copy Conf
 function stage_ccopy() {
     if [[ -d ${root_fs} ]];then
-        sudo cp -v ${scripts}/*.cmd ${root_fs}/tmp
+        sudo cp -v ${scripts}/*.cmd ${scripts}/*.inc ${root_fs}/tmp
         sudo cp -v ${configs}/yocto.list ${root_fs}/etc/apt/sources.list.d/
         copy_con='true'
     fi
@@ -32,7 +32,7 @@ function stage_1() {
 function stage_2() {
 bind_mount
 
-for cmd in 'debian.install-append.cmd' 'debian.config-append.cmd';do
+for cmd in 'debian.install.cmd' 'debian.config.cmd';do
     sudo chroot ${root_fs} /tmp/${cmd}
 done
 
@@ -43,7 +43,7 @@ bind_umount
 function stage_3() {
 bind_mount
 
-for cmd in 'docker.install-append.cmd';do
+for cmd in 'docker.install.cmd';do
     sudo chroot ${root_fs} /tmp/${cmd}
 done
 
@@ -54,7 +54,7 @@ bind_umount
 function stage_4() {
 bind_mount
 
-for cmd in 'compulab.repo-switch.cmd YOCTO' 'compulab.install-append.cmd' 'compulab.repo-switch.cmd DEBIAN';do
+for cmd in 'compulab.repo-switch.cmd YOCTO' 'compulab.install.cmd' 'compulab.repo-switch.cmd DEBIAN';do
     sudo chroot ${root_fs} /tmp/${cmd}
 done
 
@@ -73,7 +73,7 @@ IMX_BOOT="/boot/"$(basename $(ls ${root_fs}/boot/imx*))
 cat << eof | sudo tee ${root_fs}/tmp/${cmd}
 #!/bin/bash
 
-rm -rf /tmp/*.cmd /var/cache/apt /etc/apt/sources.list.d/yocto*
+rm -rf /tmp/*.cmd /tmp/*.inc /var/cache/apt /etc/apt/sources.list.d/yocto*
 SRC=/ DST=${DEVICE} QUIET=Yes cl-deploy.work
 dd=${IMX_BOOT} of=${DEVICE} bs=1K seek=33
 

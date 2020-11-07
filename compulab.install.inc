@@ -1,0 +1,11 @@
+PACKAGES="kernel
+	kernel-modules
+	kernel-devicetree
+	firmware-imx-sdma
+	linux-firmware-ax200
+	cl-uboot
+	cl-deploy
+	u-boot-imx-fw-utils
+	eeprom-util
+	mbpoll
+"
