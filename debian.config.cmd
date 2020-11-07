@@ -1,7 +1,7 @@
 #!/bin/bash -ex
 
 USERS="compulab"
-HOSTNAME="iot-gate-imx8"
+HOSTNAME="cl-debian"
 
 function debian_locales_config() {
     locale > /dev/null
