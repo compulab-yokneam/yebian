@@ -9,7 +9,7 @@ function debian_locales_config() {
     dpkg-reconfigure locales
 }
 
-function debian_nn_config() {
+function debian_netman_config() {
     NCFG='/etc/NetworkManager/NetworkManager.conf'
     if [[ -f ${NCFG} ]];then
         sed -i '/\[main\]/a dns=dnsmasq' ${NCFG}
@@ -21,16 +21,13 @@ passwd -d -e root
 
 for USER2ADD in ${USERS};do
 
-grep -q ${USER2ADD} /etc/passwd
-if [[ $? -eq 1 ]];then
-useradd --create-home --shell /bin/bash --groups sudo ${USER2ADD}
+grep -q ${USER2ADD} /etc/passwd && echo "okay" || useradd --create-home --shell /bin/bash --groups sudo ${USER2ADD}
 
 passwd ${USER2ADD} << eof
 ${USER2ADD}
 ${USER2ADD}
 eof
 
-fi
 done
 }
 
@@ -51,7 +48,7 @@ INCLUDE=${PROGNAME:0:-3}"inc"
 [[ -f ${INCLUDE} ]] && . ${INCLUDE}
 
 debian_locales_config
-debian_nn_config
+debian_netman_config
 debian_users_config
 debian_hostname_config
 debian_services_config
