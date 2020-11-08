@@ -2,14 +2,15 @@
 
 function bind_mount() {
     for d in dev sys proc; do
-	findmnt ${mpoint} || sudo mount --bind /${d} ${root_fs}/${d}
+        mpoint=$(readlink -f ${root_fs}/${d})
+        findmnt ${mpoint} &>/dev/null || sudo mount --bind /${d} ${root_fs}/${d}
     done
 }
 
 function bind_umount() {
     for d in dev sys proc; do
         mpoint=$(readlink -f ${root_fs}/${d})
-	findmnt ${mpoint} && sudo umount -l ${mpoint} || echo "okay"
+        findmnt ${mpoint} &>/dev/null && sudo umount -l ${mpoint} || true
     done
 }
 
@@ -76,7 +77,7 @@ local cmd=image.cmd
 
 IMX_BOOT="/boot/"$(basename $(ls ${root_fs}/boot/imx*))
 cat << eof | sudo tee ${root_fs}/tmp/${cmd}
-#!/bin/bash
+#!/bin/bash -x
 
 rm -rf /tmp/*.cmd /tmp/*.inc /var/cache/apt /etc/apt/sources.list.d/yocto*
 SRC=/ DST=${DEVICE} QUIET=Yes cl-deploy.work
