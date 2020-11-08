@@ -38,8 +38,6 @@ fi
 BUILDDIR=$(dirname $(dirname ${DEPLOY_DIR})) 
 BUILD_DIR=$(basename ${BUILDDIR})
 
-yocto_httpserver
-
-${DIRNAME}/debian.sh
+. ${DIRNAME}/debian.sh
 
 [[ -n ${PID} ]] && kill -9 ${PID}

@@ -2,14 +2,14 @@
 
 function bind_mount() {
     for d in dev sys proc; do
-        sudo mount --bind /${d} ${root_fs}/${d}
+	findmnt ${mpoint} || sudo mount --bind /${d} ${root_fs}/${d}
     done
 }
 
 function bind_umount() {
     for d in dev sys proc; do
         mpoint=$(readlink -f ${root_fs}/${d})
-        sudo umount -l ${mpoint}
+	findmnt ${mpoint} && sudo umount -l ${mpoint} || echo "okay"
     done
 }
 
@@ -25,7 +25,9 @@ copy_con='stage_ccopy'
 
 # Debian Debootstrap
 function stage_1() {
+if [[ ! -e ${root_fs}/var/log/bootstrap.log ]];then
     rootfs=${root_fs} name=${name} ${scripts}/debian.debootstrap.cmd
+fi
 }
 
 # Debian Extrat Install & Configuration
@@ -52,6 +54,9 @@ bind_umount
 
 # Debian CompuLab Install
 function stage_4() {
+
+command -v yocto_httpserver &>/dev/null && yocto_httpserver
+
 bind_mount
 
 for cmd in 'compulab.repo-switch.cmd YOCTO' 'compulab.install.cmd' 'compulab.repo-switch.cmd DEBIAN';do
