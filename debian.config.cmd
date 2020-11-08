@@ -21,7 +21,7 @@ passwd -d -e root
 
 for USER2ADD in ${USERS};do
 
-grep -q ${USER2ADD} /etc/passwd && echo "okay" || useradd --create-home --shell /bin/bash --groups sudo ${USER2ADD}
+grep -q ${USER2ADD} /etc/passwd || useradd --create-home --shell /bin/bash --groups sudo ${USER2ADD}
 
 passwd ${USER2ADD} << eof
 ${USER2ADD}

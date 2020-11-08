@@ -36,4 +36,4 @@ INCLUDE=${PROGNAME:0:-3}"inc"
 
 [[ -f ${INCLUDE} ]] && . ${INCLUDE}
 
-docker_install
+dpkg -l docker-ce-cli &>/dev/null || docker_install
