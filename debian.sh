@@ -81,7 +81,7 @@ cat << eof | sudo tee ${root_fs}/tmp/${cmd}
 
 rm -rf /tmp/*.cmd /tmp/*.inc /var/cache/apt /etc/apt/sources.list.d/yocto*
 SRC=/ DST=${DEVICE} QUIET=Yes cl-deploy.work
-dd=${IMX_BOOT} of=${DEVICE} bs=1K seek=${IMX_BOOT_SEEK}
+dd if=${IMX_BOOT} of=${DEVICE} bs=1K seek=${IMX_BOOT_SEEK}
 
 eof
 bind_mount
