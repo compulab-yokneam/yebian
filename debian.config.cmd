@@ -17,11 +17,14 @@ function debian_netman_config() {
 }
 
 function debian_users_config() {
+USER_GROUPS="audio,bluetooth,video,dialout,sudo"
 passwd -d -e root
 
 for USER2ADD in ${USERS};do
 
-grep -q ${USER2ADD} /etc/passwd || useradd --create-home --shell /bin/bash --groups sudo ${USER2ADD}
+grep -q ${USER2ADD} /etc/passwd || useradd --create-home --shell /bin/bash ${USER2ADD}
+
+usermod -aG ${USER_GROUPS} ${USER2ADD}
 
 passwd ${USER2ADD} << eof
 ${USER2ADD}

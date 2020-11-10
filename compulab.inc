@@ -1,9 +1,0 @@
-PACKAGES="linux-imx
-	firmware-imx
-	linux-firmware-ax200
-	cl-uboot
-	cl-deploy
-	u-boot-imx-fw-utils
-	eeprom-util
-	mbpoll
-"

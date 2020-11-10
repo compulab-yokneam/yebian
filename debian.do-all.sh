@@ -11,7 +11,7 @@ function yocto_httpserver() {
 	cd ${BUILDDIR}/../
 
 	source setup-environment ${BUILD_DIR}
-	bitbake ${PACKAGES} package-index
+	bitbake ${OEPACKAGES} package-index
 	cd tmp/deploy/deb
 	python -m SimpleHTTPServer 5678 &
 	export PID=$!
@@ -20,7 +20,7 @@ function yocto_httpserver() {
 
 }
 
-CONF=${DIRNAME}/compulab.inc
+CONF=${DIRNAME}/compulab.install.inc
 [[ ! -e ${CONF} ]] && ${EXIT} 3
 . ${CONF}
 
