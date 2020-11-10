@@ -24,7 +24,7 @@ CONF=${DIRNAME}/compulab.install.inc
 [[ ! -e ${CONF} ]] && ${EXIT} 3
 . ${CONF}
 
-CONF=${DIRNAME}/../local/local.conf
+CONF=${DIRNAME}/../conf/local.conf
 [[ ! -e ${CONF} ]] && ${EXIT} 2
 . ${CONF}
 

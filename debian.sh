@@ -108,7 +108,7 @@ DIRNAME=$(dirname ${PROGNAME})
 [ $(basename -- $BASH_SOURCE) == $(basename -- $0) ] && EXIT="exit" || EXIT="return"
 
 scripts=${DIRNAME}
-configs=${DIRNAME}/../local
+configs=${DIRNAME}/../conf
 root_fs=${DIRNAME}/../rootfs
 images=${DIRNAME}/../images
 name=bullseye
