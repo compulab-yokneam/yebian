@@ -56,7 +56,7 @@ bind_umount
 # Debian CompuLab Install
 function stage_4() {
 
-command -v yocto_httpserver &>/dev/null && yocto_httpserver
+command -v yocto_httpserver &>/dev/null && yocto_httpserver || return
 
 bind_mount
 

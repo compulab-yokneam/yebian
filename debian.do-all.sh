@@ -13,7 +13,7 @@ function yocto_httpserver() {
 	source setup-environment ${BUILD_DIR}
 	bitbake ${OEPACKAGES} package-index
 	cd tmp/deploy/deb
-	python -m SimpleHTTPServer 5678 &
+	python -m SimpleHTTPServer 5678 &>/dev/null &
 	export PID=$!
 
 	popd
