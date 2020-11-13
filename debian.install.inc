@@ -1,5 +1,6 @@
 PACKAGES="alsa-utils
 	apt-utils
+	bash-completion
 	bluez
 	bsdmainutils
 	bzip2
@@ -46,11 +47,13 @@ PACKAGES="alsa-utils
 	pv
 	python3
 	sudo
+	socat
 	systemd
 	systemd-sysv
 	tmux
 	u-boot-tools
 	udev
+	udhcpc
 	usbutils
 	vim
 	wireless-tools
