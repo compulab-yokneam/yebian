@@ -10,8 +10,14 @@ command -v ${_command} || sudo apt-get install --yes --no-install-recommends ${_
 name=${name:-bullseye}
 variant=${variant:-minbase}
 arch=${arch:-arm64}
-rootfs=${rootfs:-${arch}-${name}-${variant}}
 
 command_validator ${DEBOOTSTRAP}
+
+PROGNAME=${BASH_SOURCE[0]}
+INCLUDE=${PROGNAME:0:-3}"inc"
+
+[[ -f ${INCLUDE} ]] && . ${INCLUDE}
+
+rootfs=${rootfs:-${arch}-${name}-${variant}}
 
 sudo ${DEBOOTSTRAP} --arch=${arch} --variant=${variant} ${name} ${rootfs}
