@@ -7,6 +7,19 @@ function compulab_install() {
     fi
 }
 
+function compulab_force_install() {
+    if [[ -n ${PACKAGES_FORCE} ]];then
+    mkdir /tmp/install -p; cd /tmp/install
+        apt-get update
+        apt-get download ${PACKAGES_FORCE}
+        for deb in *.deb;do
+        dpkg -x ${deb} /
+        done
+    cd -
+    rm -rf /tmp/install
+    fi
+}
+
 export DEBIAN_FRONTEND=noninteractive
 PROGNAME=${BASH_SOURCE[0]}
 INCLUDE=${PROGNAME:0:-3}"inc"
@@ -14,3 +27,4 @@ INCLUDE=${PROGNAME:0:-3}"inc"
 [[ -f ${INCLUDE} ]] && . ${INCLUDE}
 
 compulab_install
+compulab_force_install
