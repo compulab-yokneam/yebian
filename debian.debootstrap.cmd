@@ -18,6 +18,10 @@ INCLUDE=${PROGNAME:0:-3}"inc"
 
 [[ -f ${INCLUDE} ]] && . ${INCLUDE}
 
+export name=${name}
+
 rootfs=${rootfs:-${arch}-${name}-${variant}}
 
-sudo ${DEBOOTSTRAP} --arch=${arch} --variant=${variant} ${name} ${rootfs}
+if [[ ! -e ${rootfs}/var/log/bootstrap.log ]];then
+	sudo ${DEBOOTSTRAP} --arch=${arch} --variant=${variant} ${name} ${rootfs}
+fi

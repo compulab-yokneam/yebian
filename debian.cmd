@@ -12,13 +12,21 @@ copy_con='stage_ccopy'
 
 # Debian Debootstrap
 function stage_1() {
-if [[ ! -e ${root_fs}/var/log/bootstrap.log ]];then
-    rootfs=${root_fs} name=${name} ${scripts}/debian.debootstrap.cmd
-fi
+    rootfs=${root_fs} source ${scripts}/debian.debootstrap.cmd
 }
 
 # Debian Extrat Install & Configuration
+function stage_2_pre() {
+DEBIAN_CONF=debian.config.inc
+if [[ ! -e ${DIRNAME}/${DEBIAN_CONF} ]];then
+cat << eof | tee -a ${DIRNAME}/${DEBIAN_CONF}
+HOSTNAME=${MACHINE}
+eof
+fi
+}
+
 function stage_2() {
+stage_2_pre
 bind_mount
 
 for cmd in 'debian.install.cmd' 'debian.config.cmd';do
@@ -42,7 +50,10 @@ bind_umount
 # Debian CompuLab Install
 function stage_4() {
 
-command -v yocto_httpserver &>/dev/null && yocto_httpserver || return
+CONF=${DIRNAME}/compulab.install.inc
+[[ -e ${CONF} ]] && . ${CONF} || ${EXIT} 3
+
+yocto_httpserver
 
 bind_mount
 
@@ -52,7 +63,7 @@ done
 
 bind_umount
 
-command -v _yocto_httpserver &>/dev/null && _yocto_httpserver || return
+_yocto_httpserver
 }
 
 # Image Build
@@ -99,11 +110,21 @@ INCLUDE=${PROGNAME:0:-3}"inc"
 
 DIRNAME=$(dirname ${PROGNAME})
 
+# Read the Yocto conf file
+# exit with an error if not exists
+CONF=${DIRNAME}/../conf/local.conf
+[[ -e ${CONF} ]] && . ${CONF} || ${EXIT} 2
+
+# Init the Yocot BSP variables
+# Requires for CompuLab Yocto packages
+BUILDDIR=$(dirname $(dirname ${DEPLOY_DIR}))
+BUILD_DIR=$(basename ${BUILDDIR})
+
+# Init the script variables
 scripts=${DIRNAME}
 configs=${DIRNAME}/../conf
 root_fs=${DIRNAME}/../rootfs
 images=${DIRNAME}/../images
-name=buster
 
 stages=${stages:-"1 2 3 4 5 6"}
 
