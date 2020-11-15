@@ -13,4 +13,4 @@ PACKAGES_FORCE="u-boot-imx-fw-utils
 "
 
 PACKAGES="${_PACKAGES} ${OE2DEB[linux-imx]} ${OE2DEB[firmware-imx]}"
-OEPACKAGES="${_PACKAGES} linux-imx firmware-imx"
+OEPACKAGES="${_PACKAGES} ${PACKAGES_FORCE} linux-imx firmware-imx"
