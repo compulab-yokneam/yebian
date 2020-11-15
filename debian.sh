@@ -111,7 +111,7 @@ scripts=${DIRNAME}
 configs=${DIRNAME}/../conf
 root_fs=${DIRNAME}/../rootfs
 images=${DIRNAME}/../images
-name=bullseye
+name=buster
 
 stages=${stages:-"1 2 3 4 5 6"}
 

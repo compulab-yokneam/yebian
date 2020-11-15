@@ -25,6 +25,7 @@ PACKAGES="alsa-utils
 	iw
 	kmod
 	less
+	libmodbus5
 	libparted2
 	libqmi-utils
 	locales
