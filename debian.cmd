@@ -1,19 +1,5 @@
 #!/bin/bash -ex
 
-function bind_mount() {
-    for d in dev sys proc; do
-        mpoint=$(readlink -f ${root_fs}/${d})
-        findmnt ${mpoint} &>/dev/null || sudo mount --bind /${d} ${root_fs}/${d}
-    done
-}
-
-function bind_umount() {
-    for d in dev sys proc; do
-        mpoint=$(readlink -f ${root_fs}/${d})
-        findmnt ${mpoint} &>/dev/null && sudo umount -l ${mpoint} || true
-    done
-}
-
 # Copy Conf
 function stage_ccopy() {
     if [[ -d ${root_fs} ]];then
@@ -65,6 +51,8 @@ for cmd in 'compulab.repo-switch.cmd YOCTO' 'compulab.install.cmd' 'compulab.rep
 done
 
 bind_umount
+
+command -v _yocto_httpserver &>/dev/null && _yocto_httpserver || return
 }
 
 # Image Build
@@ -104,8 +92,12 @@ eof
 }
 
 PROGNAME=${BASH_SOURCE[0]}
-DIRNAME=$(dirname ${PROGNAME})
 [ $(basename -- $BASH_SOURCE) == $(basename -- $0) ] && EXIT="exit" || EXIT="return"
+
+INCLUDE=${PROGNAME:0:-3}"inc"
+[[ -f ${INCLUDE} ]] && . ${INCLUDE}
+
+DIRNAME=$(dirname ${PROGNAME})
 
 scripts=${DIRNAME}
 configs=${DIRNAME}/../conf

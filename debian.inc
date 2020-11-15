@@ -1,0 +1,32 @@
+function _yocto_httpserver() {
+    [[ -n ${HTTPPID} ]] && kill -9 ${HTTPPID}
+}
+
+function yocto_httpserver() {
+    pushd .
+
+    cd ${BUILDDIR}/../
+
+    source setup-environment ${BUILD_DIR}
+    bitbake ${OEPACKAGES} package-index
+    cd tmp/deploy/deb
+    python -m SimpleHTTPServer 5678 &>/dev/null &
+    export HTTPPID=$!
+
+    popd
+}
+
+function bind_mount() {
+    for d in dev sys proc; do
+        mpoint=$(readlink -f ${root_fs}/${d})
+        findmnt ${mpoint} &>/dev/null || sudo mount --bind /${d} ${root_fs}/${d}
+    done
+}
+
+function bind_umount() {
+    for d in dev sys proc; do
+        mpoint=$(readlink -f ${root_fs}/${d})
+        findmnt ${mpoint} &>/dev/null && sudo umount -l ${mpoint} || true
+    done
+}
+

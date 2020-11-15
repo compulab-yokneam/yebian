@@ -4,22 +4,6 @@ PROGNAME=${BASH_SOURCE[0]}
 DIRNAME=$(dirname ${PROGNAME})
 [ $(basename -- $BASH_SOURCE) == $(basename -- $0) ] && EXIT="exit" || EXIT="return"
 
-function yocto_httpserver() {
-
-	pushd .
-
-	cd ${BUILDDIR}/../
-
-	source setup-environment ${BUILD_DIR}
-	bitbake ${OEPACKAGES} package-index
-	cd tmp/deploy/deb
-	python -m SimpleHTTPServer 5678 &>/dev/null &
-	export PID=$!
-
-	popd
-
-}
-
 CONF=${DIRNAME}/compulab.install.inc
 [[ ! -e ${CONF} ]] && ${EXIT} 3
 . ${CONF}
@@ -38,6 +22,4 @@ fi
 BUILDDIR=$(dirname $(dirname ${DEPLOY_DIR})) 
 BUILD_DIR=$(basename ${BUILDDIR})
 
-. ${DIRNAME}/debian.sh
-
-[[ -n ${PID} ]] && kill -9 ${PID}
+. ${DIRNAME}/debian.cmd
