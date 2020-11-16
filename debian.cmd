@@ -67,14 +67,20 @@ _yocto_httpserver
 }
 
 # Image Build
+function stage_5_pre() {
+[[ -z ${IMX_BOOT_PATT} ]] && ${EXIT} 4
+stat ${root_fs}/boot/${IMX_BOOT_PATT}* &>/dev/null || ${EXIT} 5
+}
+
 function stage_5() {
+stage_5_pre
 mkdir -p ${images}
 local IMAGE=${images}/compulab-debian-${name}-$(date +%Y%m%d%H%M%S).sdcard.img
 dd if=/dev/zero of=${IMAGE} bs=1M count=2048
 local DEVICE=$(sudo losetup --show --find ${IMAGE})
 local cmd=image.cmd
 
-IMX_BOOT="/boot/"$(basename $(ls ${root_fs}/boot/imx*))
+IMX_BOOT="/boot/"$(basename $(ls ${root_fs}/boot/${IMX_BOOT_PATT}*))
 cat << eof | sudo tee ${root_fs}/tmp/${cmd}
 #!/bin/bash -x
 
