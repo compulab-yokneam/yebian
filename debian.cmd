@@ -129,7 +129,7 @@ configs=${DIRNAME}/../conf
 root_fs=${DIRNAME}/../rootfs
 images=${DIRNAME}/../images
 
-INCLUDE=${PROGNAME:0:-3}"inc"
+INCLUDE=${PROGNAME:0:-3}"include"
 [[ -f ${INCLUDE} ]] && . ${INCLUDE}
 
 stages=${stages:-"1 2 3 4 5 6"}

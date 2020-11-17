@@ -30,6 +30,10 @@ function bind_umount() {
     done
 }
 
+for i in ${scripts}/*.inc ;do
+	source ${i}
+done
+
 if [ -d ${scripts}/${MACHINE} ];then
     for i in ${scripts}/${MACHINE}/* ;do
         source ${i}
