@@ -5,6 +5,9 @@ function stage_ccopy() {
     if [[ -d ${root_fs} ]];then
         sudo cp -v ${scripts}/*.cmd ${scripts}/*.inc ${root_fs}/tmp
         sudo cp -v ${configs}/yocto.list ${root_fs}/etc/apt/sources.list.d/
+	if [[ -d ${scripts}/${MACHINE} ]];then
+            sudo cp -v ${scripts}/${MACHINE}/* ${root_fs}/tmp
+        fi
         copy_con='true'
     fi
 }
@@ -49,9 +52,6 @@ bind_umount
 
 # Debian CompuLab Install
 function stage_4() {
-
-CONF=${DIRNAME}/compulab.install.inc
-[[ -e ${CONF} ]] && . ${CONF} || ${EXIT} 3
 
 yocto_httpserver
 
@@ -111,9 +111,6 @@ eof
 PROGNAME=${BASH_SOURCE[0]}
 [ $(basename -- $BASH_SOURCE) == $(basename -- $0) ] && EXIT="exit" || EXIT="return"
 
-INCLUDE=${PROGNAME:0:-3}"inc"
-[[ -f ${INCLUDE} ]] && . ${INCLUDE}
-
 DIRNAME=$(dirname ${PROGNAME})
 
 # Read the Yocto conf file
@@ -131,6 +128,9 @@ scripts=${DIRNAME}
 configs=${DIRNAME}/../conf
 root_fs=${DIRNAME}/../rootfs
 images=${DIRNAME}/../images
+
+INCLUDE=${PROGNAME:0:-3}"inc"
+[[ -f ${INCLUDE} ]] && . ${INCLUDE}
 
 stages=${stages:-"1 2 3 4 5 6"}
 
