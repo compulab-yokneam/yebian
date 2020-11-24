@@ -9,6 +9,24 @@ function debian_locales_config() {
     dpkg-reconfigure locales
 }
 
+function debian_securetty_config() {
+TTYS='ttyLP0 ttyLP1 ttyLP2 ttyLP3'
+FILE2ADD2='/etc/securetty'
+for TTY2ADD in ${TTYS};do
+    grep -q ${TTY2ADD} ${FILE2ADD2} || sed -i "$ a ${TTY2ADD}" ${FILE2ADD2}
+done
+}
+
+function debian_profiled_config() {
+PROFILED='/etc/profile.d'
+FILE2ADD2='resize.sh'
+if [[ -d ${PROFILED} && ! -e ${PROFILED}/${FILE2ADD2} ]];then
+cat << eof | tee ${PROFILED}/${FILE2ADD2}
+shopt -s checkwinsize; resize
+eof
+fi
+}
+
 function debian_netman_config() {
     NCFG='/etc/NetworkManager/NetworkManager.conf'
     if [[ -f ${NCFG} ]];then
@@ -55,3 +73,5 @@ debian_netman_config
 debian_users_config
 debian_hostname_config
 debian_services_config
+debian_securetty_config
+debian_profiled_config
