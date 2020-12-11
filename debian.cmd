@@ -4,7 +4,8 @@
 function stage_ccopy() {
     if [[ -d ${root_fs} ]];then
         sudo cp -v ${scripts}/*.cmd ${scripts}/*.inc ${root_fs}/tmp
-        sudo cp -v ${configs}/yocto.list ${root_fs}/etc/apt/sources.list.d/
+	# Moved to stage_4_pre
+        # sudo cp -v ${configs}/yocto.list ${root_fs}/etc/apt/sources.list.d/
 	if [[ -d ${scripts}/${MACHINE} ]];then
             sudo cp -v ${scripts}/${MACHINE}/* ${root_fs}/tmp
         fi
@@ -51,8 +52,13 @@ bind_umount
 }
 
 # Debian CompuLab Install
-function stage_4() {
+function stage_4_pre() {
+ls -tr ${DEPLOY_DIR}/deb | awk '($0="#deb [trusted=yes] http://localhost:5678/"$0" /")' > ${configs}/yocto.list
+sudo cp -v ${configs}/yocto.list ${root_fs}/etc/apt/sources.list.d/
+}
 
+function stage_4() {
+stage_4_pre
 yocto_httpserver
 
 bind_mount
