@@ -1,5 +1,6 @@
 PACKAGES="alsa-utils
 	apt-utils
+	bash
 	bash-completion
 	bluez
 	bsdmainutils
@@ -9,13 +10,16 @@ PACKAGES="alsa-utils
 	dialog
 	dosfstools
 	dnsmasq
+	e2fsprogs
 	ethtool
 	fbset
 	fdisk
 	file
+	gdisk
 	gpiod
 	gpsd
 	gpsd-clients
+	gzip
 	hdparm
 	i2c-tools
 	ifupdown
@@ -56,6 +60,7 @@ PACKAGES="alsa-utils
 	udev
 	udhcpc
 	usbutils
+	util-linux
 	vim
 	wireless-tools
 	wpasupplicant
