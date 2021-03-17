@@ -1,9 +1,10 @@
-declare -A OE2DEB=(['linux-imx']="kernel kernel-modules kernel-devicetree" ['firmware-imx']="firmware-imx-sdma firmware-imx-brcm")
+declare -A OE2DEB=(['linux-imx']="kernel kernel-modules kernel-devicetree" ['firmware-imx']="firmware-imx-sdma")
 
 _PACKAGES="cl-uboot
 	cl-deploy
 	alsa-state-compulab
 	pulseaudio-compulab
+	firmware-cypress
 "
 
 PACKAGES_FORCE="u-boot-imx-fw-utils
