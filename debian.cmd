@@ -33,7 +33,7 @@ function stage_2() {
 stage_2_pre
 bind_mount
 
-for cmd in 'debian.install.cmd' 'debian.config.cmd';do
+for cmd in 'compulab.repo-switch.cmd DEBIAN' 'debian.install.cmd' 'debian.config.cmd';do
     sudo chroot ${root_fs} /tmp/${cmd}
 done
 
