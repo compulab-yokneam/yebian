@@ -61,6 +61,7 @@ PACKAGES="alsa-utils
 	udhcpc
 	usbutils
 	util-linux
+	uuid-runtime
 	vim
 	wireless-tools
 	wpasupplicant
