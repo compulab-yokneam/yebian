@@ -114,6 +114,15 @@ Stages [ ${stages} ] completed
 eof
 }
 
+function stage_init() {
+bind_umount
+_yocto_httpserver
+}
+
+function stage_http() {
+yocto_httpserver
+}
+
 PROGNAME=${BASH_SOURCE[0]}
 [ $(basename -- $BASH_SOURCE) == $(basename -- $0) ] && EXIT="exit" || EXIT="return"
 
@@ -131,6 +140,7 @@ BUILD_DIR=$(basename ${BUILDDIR})
 
 # Init the script variables
 scripts=${DIRNAME}
+run=${DIRNAME}/../run
 configs=${DIRNAME}/../conf
 root_fs=${DIRNAME}/../rootfs
 images=${DIRNAME}/../images
@@ -140,7 +150,9 @@ INCLUDE=${PROGNAME:0:-3}"include"
 
 stages=${stages:-"1 2 3 4 5 6"}
 
-trap bind_umount INT QUIT TERM
+trap stage_init INT QUIT TERM
+
+stage_init
 
 for s in ${stages};do
     ${copy_con}
