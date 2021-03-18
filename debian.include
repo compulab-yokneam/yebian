@@ -1,5 +1,10 @@
 function _yocto_httpserver() {
-    [[ -n ${HTTPPID} ]] && kill -9 ${HTTPPID}
+    if [[ -e ${run}/.pids ]];then
+        for _pid in $(cat ${run}/.pids) ;do
+            [[ -d /proc/${_pid} ]] && kill -9 ${_pid} || true
+        done
+        rm -rf ${run}/.pids
+    fi
 }
 
 function yocto_httpserver() {
@@ -11,9 +16,9 @@ function yocto_httpserver() {
     bitbake ${OEPACKAGES} package-index
     cd tmp/deploy/deb
     python -m SimpleHTTPServer 5678 &>/dev/null &
-    export HTTPPID=$!
-
+    HTTPPID=$!
     popd
+    echo ${HTTPPID} >> ${run}/.pids
 }
 
 function bind_mount() {
@@ -39,3 +44,5 @@ if [ -d ${scripts}/${MACHINE} ];then
         source ${i}
     done
 fi
+
+mkdir -p ${run}
