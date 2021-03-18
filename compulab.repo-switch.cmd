@@ -10,4 +10,5 @@ ECONF=/etc/apt/sources.list.d/yocto.list
 DCONF=/etc/apt/sources.list
 fi
 
-sed -i 's/^#//g' ${ECONF} ; sed -i 's/^d/#d/g' ${DCONF}
+[[ -e ${ECONF} ]] && sed -i 's/^#//g' ${ECONF} || true
+[[ -e ${DCONF} ]] && sed -i 's/^d/#d/g' ${DCONF} || true
