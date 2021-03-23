@@ -72,17 +72,45 @@ bind_umount
 _yocto_httpserver
 }
 
-# Image Build
+# Image Pre-Build
 function stage_5_pre() {
 [[ -z ${IMX_BOOT_PATT} ]] && ${EXIT} 4
 stat ${root_fs}/boot/${IMX_BOOT_PATT}* &>/dev/null || ${EXIT} 5
+# Offline run clean up
+[[ -d ${root_fs}/run ]] && sudo rm -rf ${root_fs}/run/* || true
 }
 
+# Rootfs size calculation
+function calc_image_size() {
+    local __resultval=${1}
+    local __rootfs=$(readlink -f ${root_fs})
+    local __size=$(sudo du -sk ${__rootfs} | awk '$0=$1')
+    __size=$(($(($(($((${__size}>>10))+1536))>>10))<<10))
+    eval ${__resultval}=${__size}
+}
+
+function wait_for_noio() {
+    local __block=$(basename ${1})
+    local __time=${2}
+    local __io=();
+    __io[0]=$(awk '$0=$1' /sys/class/block/${__block}/stat)
+    for i in $(seq 1 ${__time});do
+    sleep 1
+    __io[${i}]=$(awk '$0=$1' /sys/class/block/${__block}/stat)
+    if [[ ${__io[i-1]} -eq ${__io[i]} ]];then
+        break;
+    fi
+    done
+}
+
+# Image Build
 function stage_5() {
 stage_5_pre
+calc_image_size image_size
 mkdir -p ${images}
 local IMAGE=${images}/compulab-debian-${name}-$(date +%Y%m%d%H%M%S).sdcard.img
-dd if=/dev/zero of=${IMAGE} bs=1M count=2048
+local LIMAGE=${images}/compulab-debian-${name}.sdcard.img
+dd if=/dev/zero of=${IMAGE} bs=1M count=${image_size}
 local DEVICE=$(sudo losetup --show --find ${IMAGE})
 local cmd=image.cmd
 
@@ -92,6 +120,7 @@ cat << eof | sudo tee ${root_fs}/tmp/${cmd}
 
 rm -rf /tmp/*.cmd /tmp/*.inc /var/cache/apt /etc/apt/sources.list.d/yocto*
 SRC=/ DST=${DEVICE} QUIET=Yes cl-deploy.work
+sync;sync;sync
 dd if=${IMX_BOOT} of=${DEVICE} bs=1K seek=${IMX_BOOT_SEEK}
 
 eof
@@ -99,8 +128,18 @@ bind_mount
     sudo sed -i 's/\(local _start=\).*/\14/'  ${root_fs}/usr/local/bin/cl-deploy.work
     sudo chmod a+x ${root_fs}/tmp/${cmd}
     sudo chroot ${root_fs} /tmp/${cmd}
+# sync before unmount
+sync;sync;sync
+# wait for ios to complete in 60sec
+wait_for_noio ${DEVICE} 60
+wait_for_noio ${DEVICE} 5
+
 bind_umount
-    sudo losetup -d ${DEVICE}
+
+sudo losetup -d ${DEVICE}
+
+ln -sf $(basename ${IMAGE}) ${LIMAGE}
+
 cat << eof
 Image file name:
 $(readlink -f ${IMAGE})
