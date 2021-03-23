@@ -32,7 +32,7 @@ function bind_umount() {
     for d in dev sys proc; do
 	if [[ -d ${root_fs}/${d} ]];then
         mpoint=$(readlink -f ${root_fs}/${d})
-        findmnt ${mpoint} &>/dev/null && sudo umount -l ${mpoint} || true
+        findmnt ${mpoint} &>/dev/null && sudo umount ${mpoint} || true
 	fi
     done
 }
