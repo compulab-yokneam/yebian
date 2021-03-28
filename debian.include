@@ -21,15 +21,17 @@ function yocto_httpserver() {
     echo ${HTTPPID} >> ${run}/.pids
 }
 
+declare -A mounto=([proc]='-t proc proc' [sys]='-t sysfs sys' [dev]='-t devtmpfs dev' [dev/pts]='-t devpts devpts')
+
 function bind_mount() {
-    for d in dev sys proc; do
+    for d in sys proc dev dev/pts ; do
         mpoint=$(readlink -f ${root_fs}/${d})
-        findmnt ${mpoint} &>/dev/null || sudo mount --bind /${d} ${root_fs}/${d}
+        findmnt ${mpoint} &>/dev/null || sudo mount ${mounto[${d}]} ${root_fs}/${d}
     done
 }
 
 function bind_umount() {
-    for d in dev sys proc; do
+    for d in dev/pts dev proc sys; do
 	if [[ -d ${root_fs}/${d} ]];then
         mpoint=$(readlink -f ${root_fs}/${d})
         findmnt ${mpoint} &>/dev/null && sudo umount ${mpoint} || true
