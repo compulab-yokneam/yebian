@@ -27,6 +27,12 @@ cat << eof | tee -a ${DIRNAME}/${DEBIAN_CONF}
 HOSTNAME=${MACHINE}
 eof
 fi
+
+SOURCE_LIST=sources.list
+if [[ -e ${DIRNAME}/distro/${name}/${SOURCE_LIST} ]];then
+sudo cp -v ${DIRNAME}/distro/${name}/${SOURCE_LIST} ${root_fs}/etc/apt/
+sudo chown root:root ${root_fs}/etc/apt/${SOURCE_LIST}
+fi
 }
 
 function stage_2() {
