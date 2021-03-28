@@ -12,9 +12,11 @@ function debian_locales_config() {
 function debian_securetty_config() {
 TTYS='ttyLP0 ttyLP1 ttyLP2 ttyLP3'
 FILE2ADD2='/etc/securetty'
+if [[ -f ${FILE2ADD2} ]];then
 for TTY2ADD in ${TTYS};do
     grep -q ${TTY2ADD} ${FILE2ADD2} || sed -i "$ a ${TTY2ADD}" ${FILE2ADD2}
 done
+fi
 }
 
 function debian_profiled_config() {
