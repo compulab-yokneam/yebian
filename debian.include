@@ -8,6 +8,7 @@ function _yocto_httpserver() {
 }
 
 function yocto_httpserver() {
+    HTTPPORT=${HTTPPORT:-5678}
     pushd .
 
     cd ${BUILDDIR}/../
@@ -15,7 +16,7 @@ function yocto_httpserver() {
     source setup-environment ${BUILD_DIR}
     bitbake ${OEPACKAGES} package-index
     cd tmp/deploy/deb
-    python -m SimpleHTTPServer 5678 &>/dev/null &
+    python -m SimpleHTTPServer ${HTTPPORT} &>/dev/null &
     HTTPPID=$!
     popd
     echo ${HTTPPID} >> ${run}/.pids

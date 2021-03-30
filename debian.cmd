@@ -59,11 +59,13 @@ bind_umount
 
 # Debian CompuLab Install
 function stage_4_pre() {
-ls -tr ${DEPLOY_DIR}/deb | awk '($0="#deb [trusted=yes] http://localhost:5678/"$0" /")' > ${configs}/yocto.list
+ls -tr ${DEPLOY_DIR}/deb | awk '($0="#deb [trusted=yes] http://localhost:HTTPPORT/"$0" /")' > ${configs}/yocto.list
+sed "s/HTTPPORT/${HTTPPORT}/g" -i ${configs}/yocto.list
 sudo cp -v ${configs}/yocto.list ${root_fs}/etc/apt/sources.list.d/
 }
 
 function stage_4() {
+export HTTPPORT=$(($(($(($(dd if=/dev/urandom count=1 bs=8 2>/dev/null | xxd -a | awk '($0="0x"$2)')))%4096))+4096))
 stage_4_pre
 yocto_httpserver
 
