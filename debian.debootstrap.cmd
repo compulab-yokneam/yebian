@@ -21,7 +21,6 @@ INCLUDE=${PROGNAME:0:-3}"inc"
 INCLUDE=$(dirname ${INCLUDE})/${MACHINE}/$(basename ${INCLUDE})
 [[ -f ${INCLUDE} ]] && . ${INCLUDE}
 
-export name=${name}
 
 rootfs=${rootfs:-${arch}-${name}-${variant}}
 
