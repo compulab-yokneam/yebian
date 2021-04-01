@@ -62,6 +62,7 @@ function stage_4_pre() {
 ls -tr ${DEPLOY_DIR}/deb | awk '($0="#deb [trusted=yes] http://localhost:HTTPPORT/"$0" /")' > ${configs}/yocto.list
 sed "s/HTTPPORT/${HTTPPORT}/g" -i ${configs}/yocto.list
 sudo cp -v ${configs}/yocto.list ${root_fs}/etc/apt/sources.list.d/
+[[ -n ${socarch} ]] && sudo chroot ${root_fs} dpkg --add-architecture ${socarch} || true
 }
 
 function stage_4() {
