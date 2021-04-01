@@ -116,9 +116,15 @@ function wait_for_noio() {
 function stage_5() {
 stage_5_pre
 calc_image_size image_size
+
+arch=$(sudo chroot ${root_fs} dpkg --print-architecture)
+dist=${distro[${name}]}
+
 mkdir -p ${images}
-local IMAGE=${images}/compulab-debian-${name}-$(date +%Y%m%d%H%M%S).sdcard.img
-local LIMAGE=${images}/compulab-debian-${name}.sdcard.img
+local LNAME="${images}/compulab-${dist}-${name}-${arch}"
+local RNAME=sdcard.img
+local IMAGE=${LNAME}-$(date +%Y%m%d%H%M%S).${RNAME}
+local LIMAGE=${LNAME}.${RNAME}
 dd if=/dev/zero of=${IMAGE} bs=1M count=${image_size}
 local DEVICE=$(sudo losetup --show --find ${IMAGE})
 local cmd=image.cmd
@@ -190,11 +196,12 @@ BUILD_DIR=$(basename ${BUILDDIR})
 scripts=${DIRNAME}
 run=${DIRNAME}/../run
 configs=${DIRNAME}/../conf
-root_fs=${DIRNAME}/../rootfs
 images=${DIRNAME}/../images
 
 INCLUDE=${PROGNAME:0:-3}"include"
 [[ -f ${INCLUDE} ]] && . ${INCLUDE}
+
+root_fs=${DIRNAME}/../rootfs/${distro[${name}]}-${name}-${arch}-${variant}
 
 stages=${stages:-"1 2 3 4 5 6"}
 
