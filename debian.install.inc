@@ -2,6 +2,7 @@ PACKAGES="alsa-utils
 	apt-utils
 	bash
 	bash-completion
+	bc
 	bluez
 	bsdmainutils
 	bzip2
