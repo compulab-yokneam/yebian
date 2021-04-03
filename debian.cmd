@@ -83,6 +83,14 @@ _yocto_httpserver
 
 # Image Pre-Build
 function stage_5_pre() {
+if [[ ! -f ${cl_deploy_layout} ]];then
+cat << eof
+	File ${cl_deploy_layout} is not found
+	please update cl-deploy package
+eof
+exit 3
+fi
+
 [[ -z ${IMX_BOOT_PATT} ]] && ${EXIT} 4
 stat ${root_fs}/boot/${IMX_BOOT_PATT}* &>/dev/null || ${EXIT} 5
 # Offline run clean up
@@ -90,13 +98,6 @@ stat ${root_fs}/boot/${IMX_BOOT_PATT}* &>/dev/null || ${EXIT} 5
 }
 
 # Rootfs size calculation
-function calc_image_size() {
-    local __resultval=${1}
-    local __rootfs=$(readlink -f ${root_fs})
-    local __size=$(sudo du -sk ${__rootfs} | awk '$0=$1')
-    __size=$(($(($(($((${__size}>>10))+1536))>>10))<<10))
-    eval ${__resultval}=${__size}
-}
 
 function wait_for_noio() {
     local __block=$(basename ${1})
@@ -115,18 +116,18 @@ function wait_for_noio() {
 # Image Build
 function stage_5() {
 stage_5_pre
-calc_image_size image_size
 
 arch=$(sudo chroot ${root_fs} dpkg --print-architecture)
 dist=${distro[${name}]}
 
 mkdir -p ${images}
-local LNAME="${images}/compulab-${dist}-${name}-${arch}"
+local LNAME="${images}/compulab-$(basename ${root_fs})"
 local RNAME=sdcard.img
 local IMAGE=${LNAME}-$(date +%Y%m%d%H%M%S).${RNAME}
 local LIMAGE=${LNAME}.${RNAME}
-dd if=/dev/zero of=${IMAGE} bs=1M count=${image_size}
-local DEVICE=$(sudo losetup --show --find ${IMAGE})
+image_file=${IMAGE} root_cnt=${root_cnt} root_fs=${root_fs} source ${cl_deploy_layout}
+
+local DEVICE=$(sudo losetup --show --find --partscan ${IMAGE})
 local cmd=image.cmd
 
 IMX_BOOT="/boot/"$(basename $(ls ${root_fs}/boot/${IMX_BOOT_PATT}*))
@@ -134,11 +135,12 @@ cat << eof | sudo tee ${root_fs}/tmp/${cmd}
 #!/bin/bash -x
 
 rm -rf /tmp/*.cmd /tmp/*.inc /var/cache/apt /etc/apt/sources.list.d/yocto*
-SRC=/ DST=${DEVICE} QUIET=Yes cl-deploy.work
+SRC=/ DST=${DEVICE} ROOT_CNT=${root_cnt} QUIET=Yes PARTED=Yes cl-deploy.work
 sync;sync;sync
 dd if=${IMX_BOOT} of=${DEVICE} bs=1K seek=${IMX_BOOT_SEEK}
 
 eof
+
 bind_mount
     sudo sed -i 's/\(local _start=\).*/\14/'  ${root_fs}/usr/local/bin/cl-deploy.work
     sudo chmod a+x ${root_fs}/tmp/${cmd}
@@ -201,7 +203,12 @@ images=${DIRNAME}/../images
 INCLUDE=${PROGNAME:0:-3}"include"
 [[ -f ${INCLUDE} ]] && . ${INCLUDE}
 
-root_fs=${DIRNAME}/../rootfs/${distro[${name}]}-${name}-${arch}-${variant}
+root_fs=${root_fs:-${DIRNAME}/../rootfs/${distro[${name}]}-${name}-${arch}-${variant}}
+# cl-deploy provides image size:layout:create methods
+# the lates cl-deploy must be used
+cl_deploy_layout=${root_fs}/usr/local/bin/cl-deploy.layout
+
+root_cnt=${root_cnt:-1}
 
 stages=${stages:-"1 2 3 4 5 6"}
 
