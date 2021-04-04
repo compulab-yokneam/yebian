@@ -73,7 +73,7 @@ yocto_httpserver
 bind_mount
 
 for cmd in 'compulab.repo-switch.cmd YOCTO' 'compulab.install.cmd' 'compulab.repo-switch.cmd DEBIAN';do
-    sudo chroot ${root_fs} /tmp/${cmd}
+    sudo chroot ${root_fs} /tmp/${cmd} ${FEATURES}
 done
 
 bind_umount
@@ -170,9 +170,14 @@ Stages [ ${stages} ] completed
 eof
 }
 
+function check_features() {
+grep --quiet meta-compulab-uefi ${BUILDDIR}/conf/bblayers.conf && FEATURES+="GRUB:" || true
+}
+
 function stage_init() {
 bind_umount
 _yocto_httpserver
+check_features
 }
 
 function stage_http() {
@@ -181,6 +186,14 @@ yocto_httpserver
 
 PROGNAME=${BASH_SOURCE[0]}
 [ $(basename -- $BASH_SOURCE) == $(basename -- $0) ] && EXIT="exit" || EXIT="return"
+
+if [[ -z ${BUILDDIR} ]];then
+cat << eof
+Running outside of the Yocto Buid Environment
+Exiting ...
+eof
+exit 1
+fi
 
 DIRNAME=$(dirname ${PROGNAME})
 
@@ -199,6 +212,9 @@ scripts=${DIRNAME}
 run=${DIRNAME}/../run
 configs=${DIRNAME}/../conf
 images=${DIRNAME}/../images
+
+# Gloabal Variables
+FEATURES=""
 
 INCLUDE=${PROGNAME:0:-3}"include"
 [[ -f ${INCLUDE} ]] && . ${INCLUDE}

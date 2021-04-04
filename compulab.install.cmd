@@ -20,6 +20,7 @@ function compulab_force_install() {
     fi
 }
 
+export FEATURES=${1:-"EMPTY:"}
 export DEBIAN_FRONTEND=noninteractive
 PROGNAME=${BASH_SOURCE[0]}
 INCLUDE=${PROGNAME:0:-3}"inc"
