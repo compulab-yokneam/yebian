@@ -121,7 +121,7 @@ arch=$(sudo chroot ${root_fs} dpkg --print-architecture)
 dist=${distro[${name}]}
 
 mkdir -p ${images}
-local LNAME="${images}/compulab-$(basename ${root_fs})"
+local LNAME="${images}/$(basename ${root_fs})"
 local RNAME=sdcard.img
 local IMAGE=${LNAME}-$(date +%Y%m%d%H%M%S).${RNAME}
 local LIMAGE=${LNAME}.${RNAME}
