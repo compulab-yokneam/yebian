@@ -8,18 +8,33 @@ function _yocto_httpserver() {
 }
 
 function yocto_httpserver() {
-    HTTPPORT=${HTTPPORT:-5678}
+    local _httpport=$(($(($(($(dd if=/dev/urandom count=1 bs=8 2>/dev/null | xxd -a | awk '($0="0x"$2)')))%4096))+4096))
+    local _yocto_list=$(mktemp)
+
+    HTTPPORT=${HTTPPORT:-${_httpport}}
+
+    pushd .
+
+    cd ${BUILDDIR}/tmp/deploy/deb
+    python -m SimpleHTTPServer ${HTTPPORT} &>/dev/null &
+    HTTPPID=$!
+    ls -tr | awk -v port=${HTTPPORT} '($0="#deb [trusted=yes] http://localhost:"port"/"$0" /")' > ${_yocto_list}
+
+    popd
+
+    echo ${HTTPPID} >> ${run}/.pids
+    mv ${_yocto_list} ${configs}/yocto.list
+}
+
+function yocto_packages() {
     pushd .
 
     cd ${BUILDDIR}/../
-
     source setup-environment ${BUILD_DIR}
-    bitbake ${OEPACKAGES} package-index
-    cd tmp/deploy/deb
-    python -m SimpleHTTPServer ${HTTPPORT} &>/dev/null &
-    HTTPPID=$!
+    bitbake ${PACKAGES}
+    bitbake package-index
+
     popd
-    echo ${HTTPPID} >> ${run}/.pids
 }
 
 declare -A mounto=([proc]='-t proc proc' [sys]='-t sysfs sys' [dev]='-t devtmpfs dev' [dev/pts]='-t devpts devpts')
