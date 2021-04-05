@@ -1,13 +1,13 @@
-#!/bin/bash -ex
+#!/bin/bash -e
 
 # Copy Conf
 function stage_ccopy() {
     if [[ -d ${root_fs} ]];then
-        sudo cp -v ${scripts}/*.cmd ${scripts}/*.inc ${root_fs}/tmp
+        sudo cp ${scripts}/*.cmd ${scripts}/*.inc ${root_fs}/tmp
 	# Moved to stage_4_pre
         # sudo cp -v ${configs}/yocto.list ${root_fs}/etc/apt/sources.list.d/
 	if [[ -d ${scripts}/${MACHINE} ]];then
-            sudo cp -v ${scripts}/${MACHINE}/* ${root_fs}/tmp
+            sudo cp ${scripts}/${MACHINE}/* ${root_fs}/tmp
         fi
         copy_con='true'
     fi
@@ -30,7 +30,7 @@ fi
 
 SOURCE_LIST=sources.list
 if [[ -e ${DIRNAME}/distro/${name}/${SOURCE_LIST} ]];then
-sudo cp -v ${DIRNAME}/distro/${name}/${SOURCE_LIST} ${root_fs}/etc/apt/
+sudo cp ${DIRNAME}/distro/${name}/${SOURCE_LIST} ${root_fs}/etc/apt/
 sudo chown root:root ${root_fs}/etc/apt/${SOURCE_LIST}
 fi
 }
@@ -61,7 +61,7 @@ bind_umount
 function stage_4_pre() {
 ls -tr ${DEPLOY_DIR}/deb | awk '($0="#deb [trusted=yes] http://localhost:HTTPPORT/"$0" /")' > ${configs}/yocto.list
 sed "s/HTTPPORT/${HTTPPORT}/g" -i ${configs}/yocto.list
-sudo cp -v ${configs}/yocto.list ${root_fs}/etc/apt/sources.list.d/
+sudo cp ${configs}/yocto.list ${root_fs}/etc/apt/sources.list.d/
 [[ -n ${socarch} ]] && sudo chroot ${root_fs} dpkg --add-architecture ${socarch} || true
 }
 
