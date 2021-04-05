@@ -24,6 +24,8 @@ INCLUDE=$(dirname ${INCLUDE})/${MACHINE}/$(basename ${INCLUDE})
 
 rootfs=${rootfs:-${arch}-${name}-${variant}}
 
+mkdir -p $(basename ${rootfs})
+
 if [[ ! -e ${rootfs}/var/log/bootstrap.log ]];then
 	sudo ${DEBOOTSTRAP} --arch=${arch} --variant=${variant} ${name} ${rootfs}
 fi
