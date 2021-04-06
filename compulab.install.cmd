@@ -21,10 +21,15 @@ function compulab_force_install() {
 }
 
 export FEATURES=${1:-"EMPTY:"}
-export DEBIAN_FRONTEND=noninteractive
+export DEBIAN_FRONTEND=noninteractive DEBCONF_NONINTERACTIVE_SEEN=true
 PROGNAME=${BASH_SOURCE[0]}
-INCLUDE=${PROGNAME:0:-3}"inc"
 
+INCLUDE=${PROGNAME:0:-3}"inc"
+[[ -f ${INCLUDE} ]] && . ${INCLUDE}
+
+# fnc file must be included after the inc
+# this file uses the inc file definitions
+INCLUDE=${PROGNAME:0:-3}"fnc"
 [[ -f ${INCLUDE} ]] && . ${INCLUDE}
 
 compulab_install

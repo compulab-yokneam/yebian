@@ -1,36 +1,5 @@
 export socarch=arm64
 
-PACKAGES=""
-PACKAGES_FORCE=""
-FEATURES=${FEATURES:-"EMPTY;"}
-
-function method_install() {
-    PACKAGES+=${packages}" "
-}
-
-function method_decide() {
-    ischroot && chroot_arch=$(dpkg --print-architecture) || chroot_arch=${socarch}
-    [[ ${chroot_arch} = ${socarch} ]] && PACKAGES+=${packages}" " || PACKAGES_FORCE+=${packages}" "
-}
-
-function method_force() {
-    PACKAGES_FORCE+=${packages}" "
-}
-
-function chroot_env() {
-    for _p in ${OE2DEB[@]};do
-        eval ${_p}
-        packages=$(cat <<< ${packages} | tr ":" " ")
-        packages=${packages} method_${method}
-    done
-}
-
-function build_env() {
-    for _p in ${!OE2DEB[@]};do
-        PACKAGES+=${_p}" "
-    done
-}
-
 declare -A OE2DEB=()
 
 OE2DEB+=(['linux-imx']='method="install";packages="kernel:kernel-modules:kernel-devicetree:"')
@@ -53,8 +22,3 @@ OE2DEB+=(['grub-bootconf']='method="force";packages="grub-bootconf:"')
 OE2DEB+=(['grub-efi']='method="force";packages="grub-efi:"')
 OE2DEB+=(['cl-root']='method="force";packages="cl-root:"')
 fi
-
-ischroot && chroot_env || build_env
-
-export PACKAGES=${PACKAGES}
-export PACKAGES_FORCE=${PACKAGES_FORCE}

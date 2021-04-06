@@ -3,7 +3,7 @@
 # Copy Conf
 function stage_ccopy() {
     if [[ -d ${root_fs} ]];then
-        sudo cp ${scripts}/*.cmd ${scripts}/*.inc ${root_fs}/tmp
+        sudo cp ${scripts}/*.{cmd,inc,fnc} ${root_fs}/tmp
 	if [[ -d ${scripts}/${MACHINE} ]];then
             sudo cp ${scripts}/${MACHINE}/* ${root_fs}/tmp
         fi
@@ -245,6 +245,7 @@ if [ -d ${scripts}/${MACHINE} ];then
     done
 fi
 
+source ${scripts}/compulab.install.fnc
 
 root_fs=${root_fs:-${DIRNAME}/../rootfs/${distro[${name}]}-${name}-${arch}-${variant}}
 # cl-deploy provides image size:layout:create methods
