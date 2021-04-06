@@ -224,12 +224,27 @@ run=${DIRNAME}/../run
 configs=${DIRNAME}/../conf
 images=${DIRNAME}/../images
 
+mkdir -p ${run} ${images}
+
 # Gloabal Variables
+declare -A distro=([sid]=debian [buster]=debian [bullseye]=debian [bookworm]=debian [trixie]=debian [bionic]=ubuntu [focal]=ubuntu [groovy]=ubuntu)
+
 FEATURES=""
 check_features
 
 INCLUDE=${PROGNAME:0:-3}"include"
 [[ -f ${INCLUDE} ]] && . ${INCLUDE}
+
+for i in ${scripts}/*.inc ;do
+	source ${i}
+done
+
+if [ -d ${scripts}/${MACHINE} ];then
+    for i in ${scripts}/${MACHINE}/* ;do
+        source ${i}
+    done
+fi
+
 
 root_fs=${root_fs:-${DIRNAME}/../rootfs/${distro[${name}]}-${name}-${arch}-${variant}}
 # cl-deploy provides image size:layout:create methods

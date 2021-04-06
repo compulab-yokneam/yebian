@@ -37,9 +37,8 @@ function yocto_packages() {
     popd
 }
 
-declare -A mounto=([proc]='-t proc proc' [sys]='-t sysfs sys' [dev]='-t devtmpfs dev' [dev/pts]='-t devpts devpts')
-
 function bind_mount() {
+    declare -A mounto=([proc]='-t proc proc' [sys]='-t sysfs sys' [dev]='-t devtmpfs dev' [dev/pts]='-t devpts devpts')
     for d in sys proc dev dev/pts ; do
         mpoint=$(readlink -f ${root_fs}/${d})
         findmnt ${mpoint} &>/dev/null || sudo mount ${mounto[${d}]} ${root_fs}/${d}
@@ -54,17 +53,3 @@ function bind_umount() {
 	fi
     done
 }
-
-for i in ${scripts}/*.inc ;do
-	source ${i}
-done
-
-if [ -d ${scripts}/${MACHINE} ];then
-    for i in ${scripts}/${MACHINE}/* ;do
-        source ${i}
-    done
-fi
-
-mkdir -p ${run}
-
-declare -A distro=([sid]=debian [buster]=debian [bullseye]=debian [bookworm]=debian [trixie]=debian [bionic]=ubuntu [focal]=ubuntu [groovy]=ubuntu)
