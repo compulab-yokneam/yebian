@@ -12,8 +12,7 @@ function stage_ccopy() {
 }
 copy_con='stage_ccopy'
 
-# Debian Debootstrap
-function stage_1_pre() {
+function stage_cgen() {
     DEBOOTSTRAP_CONF=${DIRNAME}/${MACHINE}/debian.debootstrap.inc
     if [[ ! -e ${DEBOOTSTRAP_CONF} ]];then
         CFG=${DEBOOTSTRAP_CONF} source ${scripts}/debian.debootstrap.cfg
@@ -25,8 +24,8 @@ eof
     fi
 }
 
+# Debian Debootstrap
 function stage_1() {
-    stage_1_pre
     rootfs=${root_fs} source ${scripts}/debian.debootstrap.cmd
 }
 
@@ -246,6 +245,8 @@ if [ -d ${scripts}/${MACHINE} ];then
 fi
 
 source ${scripts}/compulab.install.fnc
+
+stage_cgen
 
 root_fs=${root_fs:-${DIRNAME}/../rootfs/${distro[${name}]}-${name}-${arch}-${variant}}
 # cl-deploy provides image size:layout:create methods
