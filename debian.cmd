@@ -69,15 +69,19 @@ bind_umount
 
 # Debian CompuLab Install
 function stage_4_pre() {
+yocto_packages
+yocto_httpserver
+# Copy the yocto.list every time the server was started
+# The server uses different HTTPORT each start
 sudo cp ${configs}/yocto.list ${root_fs}/etc/apt/sources.list.d/
 [[ -n ${socarch} ]] && sudo chroot ${root_fs} dpkg --add-architecture ${socarch} || true
 }
 
+function stage_4_post() {
+    _yocto_httpserver
+}
+
 function stage_4() {
-
-yocto_packages
-
-yocto_httpserver
 
 stage_4_pre
 
@@ -89,7 +93,8 @@ done
 
 bind_umount
 
-_yocto_httpserver
+stage_4_post
+
 }
 
 # Image Pre-Build
