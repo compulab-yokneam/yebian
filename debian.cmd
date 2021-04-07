@@ -134,7 +134,6 @@ function stage_5() {
 stage_5_pre
 
 arch=$(sudo chroot ${root_fs} dpkg --print-architecture)
-dist=${distro[${name}]}
 
 mkdir -p ${images}
 local LNAME="${images}/$(basename ${root_fs})"
@@ -231,7 +230,6 @@ images=${DIRNAME}/../images
 mkdir -p ${run} ${images}
 
 # Gloabal Variables
-declare -A distro=([sid]=debian [buster]=debian [bullseye]=debian [bookworm]=debian [trixie]=debian [bionic]=ubuntu [focal]=ubuntu [groovy]=ubuntu)
 
 FEATURES=""
 check_features
@@ -253,7 +251,7 @@ source ${scripts}/compulab.install.fnc
 
 stage_cgen
 
-root_fs=${root_fs:-${DIRNAME}/../rootfs/${distro[${name}]}-${name}-${arch}-${variant}}
+root_fs=${root_fs:-${DIRNAME}/../rootfs/${distro}-${name}-${arch}-${variant}}
 # cl-deploy provides image size:layout:create methods
 # the lates cl-deploy must be used
 cl_deploy_layout=${root_fs}/usr/local/bin/cl-deploy.layout
