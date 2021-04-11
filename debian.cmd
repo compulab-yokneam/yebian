@@ -185,10 +185,6 @@ Stages [ ${stages} ] completed
 eof
 }
 
-function check_features() {
-grep --quiet meta-compulab-uefi ${BUILDDIR}/conf/bblayers.conf && FEATURES+="GRUB:" || true
-}
-
 function stage_init() {
 bind_umount
 _yocto_httpserver
@@ -230,9 +226,6 @@ images=${DIRNAME}/../images
 mkdir -p ${run} ${images}
 
 # Gloabal Variables
-
-FEATURES=""
-check_features
 
 INCLUDE=${PROGNAME:0:-3}"include"
 [[ -f ${INCLUDE} ]] && . ${INCLUDE}
