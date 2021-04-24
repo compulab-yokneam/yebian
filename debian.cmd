@@ -221,9 +221,10 @@ BUILD_DIR=$(basename ${BUILDDIR})
 scripts=${DIRNAME}
 run=${DIRNAME}/../run
 configs=${DIRNAME}/../conf
+rootfs=${DIRNAME}/../rootfs
 images=${DIRNAME}/../images
 
-mkdir -p ${run} ${images}
+mkdir -p ${run} ${images} ${rootfs}
 
 # Gloabal Variables
 
