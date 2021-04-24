@@ -108,7 +108,7 @@ exit 3
 fi
 
 [[ -z ${IMX_BOOT_PATT} ]] && ${EXIT} 4
-stat ${root_fs}/boot/${IMX_BOOT_PATT}* &>/dev/null || ${EXIT} 5
+stat ${root_fs}/boot/${IMX_BOOT_PATT} &>/dev/null || ${EXIT} 5
 # Offline run clean up
 [[ -d ${root_fs}/run ]] && sudo rm -rf ${root_fs}/run/* || true
 }
@@ -145,7 +145,7 @@ image_file=${IMAGE} root_cnt=${root_cnt} root_fs=${root_fs} source ${cl_deploy_l
 local DEVICE=$(sudo losetup --show --find --partscan ${IMAGE})
 local cmd=image.cmd
 
-IMX_BOOT="/boot/"$(basename $(ls ${root_fs}/boot/${IMX_BOOT_PATT}*))
+IMX_BOOT="/boot/"$(basename $(ls ${root_fs}/boot/${IMX_BOOT_PATT}))
 cat << eof | sudo tee ${root_fs}/tmp/${cmd}
 #!/bin/bash -x
 
