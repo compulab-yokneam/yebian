@@ -1,29 +1,19 @@
-function _yocto_httpserver() {
-    if [[ -e ${run}/.pids ]];then
-        for _pid in $(cat ${run}/.pids) ;do
-            [[ -d /proc/${_pid} ]] && kill -9 ${_pid} || true
-        done
-        rm -rf ${run}/.pids
-    fi
+function yocto_deb_fini() {
+    sudo umount -l ${root_fs}/media &>/dev/null || echo "Allready unmounted"
 }
 
-function yocto_httpserver() {
-    local _httpport=$(($(($(($(dd if=/dev/urandom count=1 bs=8 2>/dev/null | xxd -a | awk '($0="0x"$2)')))%4096))+4096))
+function yocto_deb_init() {
     local _yocto_list=$(mktemp)
-
-    HTTPPORT=${HTTPPORT:-${_httpport}}
 
     pushd .
 
     cd ${BUILDDIR}/tmp/deploy/deb
-    python -m SimpleHTTPServer ${HTTPPORT} &>/dev/null &
-    HTTPPID=$!
-    ls -tr | awk -v port=${HTTPPORT} '($0="#deb [trusted=yes] http://localhost:"port"/"$0" /")' > ${_yocto_list}
-
+    ls -tr | awk '($0="#deb [trusted=yes] file:/media/"$0" ./")' > ${_yocto_list}
     popd
 
-    echo ${HTTPPID} >> ${run}/.pids
     mv ${_yocto_list} ${configs}/yocto.list
+
+    sudo mount -o ro -B ${BUILDDIR}/tmp/deploy/deb ${root_fs}/media
 }
 
 function yocto_packages() {

@@ -70,7 +70,7 @@ bind_umount
 # Debian CompuLab Install
 function stage_4_pre() {
 yocto_packages
-yocto_httpserver
+yocto_deb_init
 # Copy the yocto.list every time the server was started
 # The server uses different HTTPORT each start
 sudo cp ${configs}/yocto.list ${root_fs}/etc/apt/sources.list.d/
@@ -78,7 +78,7 @@ sudo cp ${configs}/yocto.list ${root_fs}/etc/apt/sources.list.d/
 }
 
 function stage_4_post() {
-    _yocto_httpserver
+    yocto_deb_fini
 }
 
 function stage_4() {
@@ -187,11 +187,11 @@ eof
 
 function stage_init() {
 bind_umount
-_yocto_httpserver
+yocto_deb_fini
 }
 
 function stage_http() {
-yocto_httpserver
+yocto_deb_init
 }
 
 PROGNAME=${BASH_SOURCE[0]}
