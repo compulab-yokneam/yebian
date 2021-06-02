@@ -1,4 +1,4 @@
-#!/bin/bash -e
+#!/bin/bash -xe
 
 # Copy Conf
 function stage_ccopy() {
@@ -150,6 +150,7 @@ cat << eof | sudo tee ${root_fs}/tmp/${cmd}
 #!/bin/bash -x
 
 rm -rf /tmp/*.cmd /tmp/*.inc /var/cache/apt /etc/apt/sources.list.d/yocto*
+chmod 0755 /
 SRC=/ DST=${DEVICE} ROOT_CNT=${root_cnt} QUIET=Yes PARTED=Yes cl-deploy.work
 sync;sync;sync
 dd if=${IMX_BOOT} of=${DEVICE} bs=1K seek=${IMX_BOOT_SEEK}
