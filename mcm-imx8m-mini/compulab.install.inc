@@ -22,3 +22,8 @@ OE2DEB+=(['grub-bootconf']='method="force";packages="grub-bootconf:"')
 OE2DEB+=(['grub-efi']='method="force";packages="grub-efi:"')
 OE2DEB+=(['cl-root']='method="force";packages="cl-root:"')
 fi
+
+# This is an example for packages that must be reinstalled
+# For chroot environment only
+OE2DEB+=(['kernel']='method="reinstall";packages="kernel:"')
+OE2DEB+=(['kernel-devicetree']='method="reinstall";packages="kernel-devicetree:"')
