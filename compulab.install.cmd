@@ -20,6 +20,12 @@ function compulab_force_install() {
     fi
 }
 
+function compulab_reinstall() {
+    if [[ -n ${PACKAGES_REINSTALL} ]];then
+        apt-get reinstall --yes ${PACKAGES_REINSTALL}
+    fi
+}
+
 export FEATURES=${1:-"EMPTY:"}
 export DEBIAN_FRONTEND=noninteractive DEBCONF_NONINTERACTIVE_SEEN=true
 PROGNAME=${BASH_SOURCE[0]}
@@ -33,4 +39,5 @@ INCLUDE=${PROGNAME:0:-3}"fnc"
 [[ -f ${INCLUDE} ]] && . ${INCLUDE}
 
 compulab_install
+compulab_reinstall
 compulab_force_install

@@ -1,5 +1,6 @@
 PACKAGES=""
 PACKAGES_FORCE=""
+PACKAGES_REINSTALL=""
 FEATURES=${FEATURES:-"EMPTY;"}
 
 function method_install() {
@@ -15,6 +16,10 @@ function method_force() {
     PACKAGES_FORCE+=${packages}" "
 }
 
+function method_reinstall() {
+    PACKAGES_REINSTALL+=${packages}" "
+}
+
 function chroot_env() {
     for _p in ${OE2DEB[@]};do
         eval ${_p}
@@ -23,9 +28,20 @@ function chroot_env() {
     done
 }
 
+function be_method_add() {
+    PACKAGES+=${packages}" "
+}
+
+function be_method_reinstall() {
+cat << eom
+    Nothing to do with in the build environment.
+eom
+}
+
 function build_env() {
     for _p in ${!OE2DEB[@]};do
-        PACKAGES+=${_p}" "
+        eval ${OE2DEB[${_p}]}
+        command -v be_method_${method} && packages=${_p} be_method_${method} || packages=${_p} be_method_add
     done
 }
 
@@ -40,3 +56,4 @@ ischroot && chroot_env || build_env
 
 export PACKAGES=${PACKAGES}
 export PACKAGES_FORCE=${PACKAGES_FORCE}
+export PACKAGES_REINSTALL=${PACKAGES_REINSTALL}
