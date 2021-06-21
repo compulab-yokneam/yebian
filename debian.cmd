@@ -12,8 +12,16 @@ function stage_ccopy() {
 }
 copy_con='stage_ccopy'
 
+function stage_sgen() {
+    [[ ! -e ${DEBOOTSTRAP_CONF} ]] && return || true
+    time_stamp=$(date +%Y%m%d_%H%M%S)
+    sed -i 's/^/#/g' ${DEBOOTSTRAP_CONF}
+    mv ${DEBOOTSTRAP_CONF} ${DEBOOTSTRAP_CONF}_${time_stamp}
+}
+
 function stage_cgen() {
     DEBOOTSTRAP_CONF=${DIRNAME}/${MACHINE}/debian.debootstrap.inc
+    [[ -n ${REINIT} ]] && DEBOOTSTRAP_CONF=${DEBOOTSTRAP_CONF} stage_sgen
     if [[ ! -e ${DEBOOTSTRAP_CONF} ]];then
         CFG=${DEBOOTSTRAP_CONF} source ${scripts}/debian.debootstrap.cfg
 cat << eof
