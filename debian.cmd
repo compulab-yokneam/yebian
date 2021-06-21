@@ -1,4 +1,4 @@
-#!/bin/bash -xe
+#!/bin/bash -e
 
 # Copy Conf
 function stage_ccopy() {
@@ -259,7 +259,9 @@ trap stage_init INT QUIT TERM
 
 stage_init
 
+set -x
 for s in ${stages};do
     ${copy_con}
     command -v stage_${s} &>/dev/null && stage_${s}
 done
+set +x
